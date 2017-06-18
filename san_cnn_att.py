@@ -41,7 +41,6 @@ class Answer_Generator():
         
         loss = 0.0
         states_feat = []
-
         with tf.variable_scope("embed"):
             for i in range(max_words_q):
                 if i==0:
@@ -94,7 +93,6 @@ class Answer_Generator():
         image = tf.placeholder(tf.float32, [self.batch_size, self.dim_image[0], self.dim_image[1], self.dim_image[2]])
         question = tf.placeholder(tf.int32, [self.batch_size, self.max_words_q])
 
-        loss = 0.0
         states_feat = []
         with tf.variable_scope("embed"):
             for i in range(max_words_q):
@@ -150,7 +148,6 @@ class Answer_Generator():
                     strides=[1, 1, 1, 1], padding='VALID')
                     
         return tf.tanh(conv + biases)
-        #return tf.nn.relu(conv + biases)
 
     def attention(self, question_emb, image_emb):
 
@@ -279,10 +276,8 @@ def get_data():
 
     print('Normalizing image feature')
     if img_norm:
-        #tem = np.sqrt(np.sum(np.multiply(img_feature, img_feature), axis=1))
         tem = np.sqrt(np.sum(np.multiply(img_feature, img_feature), axis=1))
         
-        #img_feature = np.divide(img_feature, np.transpose(np.tile(tem,(4096,1))))
         img_feature = np.transpose(img_feature,(0,2,3,1))
         img_feature = np.divide(img_feature, np.transpose(np.tile(tem,[512,1,1,1]),(1,2,3,0)) + 1e-8)
 
@@ -410,6 +405,12 @@ def train():
             print "Iteration ", itr, " is done. Saving the model ..."
             saver.save(sess, os.path.join(checkpoint_path, 'model'), global_step=itr)
 
+    #print "Finally, saving the model ..."
+    #saver.save(sess, os.path.join(checkpoint_path, 'model'), global_step=n_epochs)
+    #tStop_total = time.time()
+    #print "Total Time Cost:", round(tStop_total - tStart_total,2), "s"
+
+
 def test():
     print 'loading dataset...'
     dataset, img_feature, test_data = get_data_test()
@@ -435,7 +436,7 @@ def test():
     sess = tf.Session(config=tf.ConfigProto(gpu_options=gpu_options))
     with tf.device('/cpu:0'):
         saver = tf.train.Saver()
-        saver.restore(sess, os.path.join(checkpoint_path, 'model-75000'))
+        saver.restore(sess, os.path.join(checkpoint_path, 'model-60000'))
 
     tStart_total = time.time()
     result = []

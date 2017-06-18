@@ -7,7 +7,7 @@ import math
 import cv2
 import json
 import pdb
-rnn_cell = tf.nn.rnn_cell
+rnn_cell = tf.contrib.rnn
 
 class Answer_Generator():
     def __init__(self, rnn_size, rnn_layer, batch_size, input_embedding_size, dim_image, dim_hidden, dim_attention, max_words_q, vocabulary_size, drop_out_rate):
@@ -45,9 +45,8 @@ class Answer_Generator():
         question = tf.placeholder(tf.int32, [self.batch_size, self.max_words_q])
         label = tf.placeholder(tf.int64, [self.batch_size,]) 
         
-        state = tf.zeros([self.batch_size, self.stacked_lstm.state_size])
+        state = self.stacked_lstm.zero_state(self.batch_size, tf.float32)
         loss = 0.0
-        states_feat = []
         with tf.variable_scope("embed"):
             for i in range(max_words_q):
                 if i==0:
@@ -61,13 +60,9 @@ class Answer_Generator():
                 ques_emb = tf.tanh(ques_emb_drop)
 
                 output, state = self.stacked_lstm(ques_emb, state)
-                
-                states_feat.append(ques_emb_linear) 
 
-        question_feat = tf.pack(states_feat,axis=-1)
-        
         # multimodal (fusing question & image)
-        question_emb = state
+        question_emb = tf.reshape(tf.transpose(state, [2, 1, 0, 3]), [self.batch_size, -1])
 
         image_emb = tf.reshape(image, [-1, self.dim_image[2]]) # (b x m) x d
         image_emb = tf.nn.xw_plus_b(image_emb, self.embed_image_W, self.embed_image_b)
@@ -82,7 +77,7 @@ class Answer_Generator():
         scores_emb = tf.nn.xw_plus_b(comb_emb, self.embed_scor_W, self.embed_scor_b) 
 
         # Calculate cross entropy
-        cross_entropy = tf.nn.sparse_softmax_cross_entropy_with_logits(scores_emb, label)
+        cross_entropy = tf.nn.sparse_softmax_cross_entropy_with_logits(labels=label, logits=scores_emb)
 
         # Calculate loss
         loss = tf.reduce_mean(cross_entropy)
@@ -93,9 +88,7 @@ class Answer_Generator():
         image = tf.placeholder(tf.float32, [self.batch_size, self.dim_image[0], self.dim_image[1], self.dim_image[2]])
         question = tf.placeholder(tf.int32, [self.batch_size, self.max_words_q])
 
-        state = tf.zeros([self.batch_size, self.stacked_lstm.state_size])
-        loss = 0.0
-        states_feat = []
+        state = self.stacked_lstm.zero_state(self.batch_size, tf.float32)
         for i in range(max_words_q):
             if i==0:
                 ques_emb_linear = tf.zeros([self.batch_size, self.input_embedding_size])
@@ -107,12 +100,9 @@ class Answer_Generator():
             ques_emb = tf.tanh(ques_emb_drop)
             
             output, state = self.stacked_lstm(ques_emb, state)
-            states_feat.append(ques_emb_linear) 
-
-        question_feat = tf.pack(states_feat,axis=-1)
 
         # multimodal (fusing question & image)
-        question_emb = state
+        question_emb = tf.reshape(tf.transpose(state, [2, 1, 0, 3]), [self.batch_size, -1])
 
         image_emb = tf.reshape(image, [-1, self.dim_image[2]]) # (b x m) x d
         image_emb = tf.nn.xw_plus_b(image_emb, self.embed_image_W, self.embed_image_b)
@@ -167,7 +157,7 @@ class Answer_Generator():
         for b in range(self.batch_size):
             image_att.append(tf.matmul(tf.expand_dims(prob_att[b,:],0), image_emb[b,:,:]))
 
-        image_att = tf.pack(image_att)
+        image_att = tf.stack(image_att)
         image_att = tf.reduce_sum(image_att, 1)
 
         comb_emb = tf.add(image_att, question_emb)
@@ -257,8 +247,10 @@ def get_data():
 
     print('Normalizing image feature')
     if img_norm:
+        #tem = np.sqrt(np.sum(np.multiply(img_feature, img_feature), axis=1))
         tem = np.sqrt(np.sum(np.multiply(img_feature, img_feature), axis=1))
         
+        #img_feature = np.divide(img_feature, np.transpose(np.tile(tem,(4096,1))))
         img_feature = np.transpose(img_feature,(0,2,3,1))
         img_feature = np.divide(img_feature, np.transpose(np.tile(tem,[512,1,1,1]),(1,2,3,0)) + 1e-8)
 
@@ -411,7 +403,7 @@ def test():
     sess = tf.Session(config=tf.ConfigProto(gpu_options=gpu_options))
     with tf.device('/cpu:0'):
         saver = tf.train.Saver()
-        saver.restore(sess, os.path.join(checkpoint_path, 'model-75000'))
+        saver.restore(sess, os.path.join(checkpoint_path, 'model-70000'))
 
     tStart_total = time.time()
     result = []
