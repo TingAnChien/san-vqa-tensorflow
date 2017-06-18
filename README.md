@@ -7,7 +7,7 @@ This code is modified from a tensorflow edition for deeper LSTM and normalized C
 
 ### Requirements
 
-The code is written in Python and requires [Tensorflow](https://www.tensorflow.org)(>r1.0). The preprocssinng code is in Python. The code for image feature extraction is written in Lua and requires [Torch](http://torch.ch/).</br>
+The code is written in Python and requires [Tensorflow](https://www.tensorflow.org)(>r1.0). The preprocssinng code is in Python.</br>
 (I also provide an old version(r0.10) for tensorflow model in branch r0.10)
 
 ### Prepare Data (from [VQA-tensorflow](https://github.com/JamesChuanggg/VQA-tensorflow))
@@ -29,10 +29,10 @@ $ python prepro.py --input_train_json data/vqa_raw_train.json --input_test_json 
 to get the question features. `--num_ans` specifiy how many top answers you want to use during training. You will also see some question and answer statistics in the terminal output. This will generate two files in your main folder, `data_prepro.h5` and `data_prepro.json`. To get the image features, run
 
 ```
-$ th prepro_img.lua -input_json data_prepro.json -image_root path_to_image_root -cnn_proto path_to_cnn_prototxt -cnn_model path to cnn_model
+$ python prepro_img.py
 ```
 
-Here we  modify `prepro_img.lua` to get the `pool5` feature map instead of `fc7` from VGG_ILSVRC_19_layers [model](https://gist.github.com/ksimonyan/3785162f95cd2d5fee77). After this step, you can get the image feature `data_img.h5`. We have prepared everything and ready to launch training.
+Here we use caffe to extract the `pool5` feature map instead of `fc7` from VGG_ILSVRC_19_layers [model](https://gist.github.com/ksimonyan/3785162f95cd2d5fee77). After this step, you can get the image feature `data_img.h5`. We have prepared everything and ready to launch training.
 
 
 ### Training and Testing
