@@ -1,6 +1,6 @@
 # Tensorflow Implementation of Stacked Attention Networks for Image Question Answering
 
-![]()
+![](http://i.imgur.com/w12GezL.jpg)
 
 Provide tensorflow edition for [SAN](https://arxiv.org/pdf/1511.02274.pdf), stacked attention network for image question answering model. The LSTM and CNN based question models are provided, and they both using two attention layers.
 This code is modified from a tensorflow edition for deeper LSTM and normalized CNN VQA ([VQA-tensorflow](https://github.com/JamesChuanggg/VQA-tensorflow)).
