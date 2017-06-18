@@ -247,7 +247,7 @@ def test(model_path='model/model_lstm_att2/model-70000'):
             generated_ans, prob_att1, prob_att2 = model.test(imfeat, question)
             generated_ans = np.argmax(generated_ans, axis=1)[0]
             att2 = attention(img, prob_att2)
-            cv2.imwrite(att_image, att4.astype(np.uint8))
+            cv2.imwrite(att_image, att2.astype(np.uint8))
 
             ans = itoa[str(generated_ans+1)]
             with open(answer_txt, 'w') as f:
