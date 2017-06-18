@@ -1,8 +1,9 @@
 # VQA Demo
 ![](http://i.imgur.com/Q5pUnW4.png)
 
-This demo is composed of two parts, a website and a background process.
-When you have prepared both parts, you can start running.
+This demo is composed of two parts, a website and a background process.  
+When you have prepared both parts, you can start running. Note that the website directory path should be well designated.
+
 ```
 $ python demo_att.py
 ```
