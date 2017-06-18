@@ -10,29 +10,45 @@ This code is modified from a tensorflow edition for deeper LSTM and normalized C
 The code is written in Python and requires [Tensorflow](https://www.tensorflow.org)(>r1.0). The preprocssinng code is in Python.</br>
 (I also provide an old version(r0.10) for tensorflow model in branch r0.10)
 
-### Prepare Data (from [VQA-tensorflow](https://github.com/JamesChuanggg/VQA-tensorflow))
-(Here's a copy from the original readme.md)
+### Prepare Data (modified from [VQA-tensorflow](https://github.com/JamesChuanggg/VQA-tensorflow))
+(Some texts are copied from the original readme.md)
 The first thing you need to do is to download the data and do some preprocessing. Head over to the `data/` folder and run
 
+#### Download and Preprocess Dataset
+for VQA 1.0:
 ```
 $ python vqa_preprocessing.py --download True --split 1
+```
+We modify a version for VQA 2.0:
+```
+$ python vqa_preprocessing_v2.py --download True --split 1
 ```
 
 `--download Ture` means you choose to download the VQA data from the [VQA website](http://www.visualqa.org/) and `--split 1` means you use COCO train set to train and validation set to evaluation. `--split 2 ` means you use COCO train+val set to train and test set to evaluate. After this step, it will generate two files under the `data` folder. `vqa_raw_train.json` and `vqa_raw_test.json`
 
+#### Preprocess Texts
 Once you have these, we are ready to get the question and image features. Back to the main folder, run
 
 ```
 $ python prepro.py --input_train_json data/vqa_raw_train.json --input_test_json data/vqa_raw_test.json --num_ans 1000
 ```
 
-to get the question features. `--num_ans` specifiy how many top answers you want to use during training. You will also see some question and answer statistics in the terminal output. This will generate two files in your main folder, `data_prepro.h5` and `data_prepro.json`. To get the image features, run
+If you want to use *model_VQA_w2v.py* ([VQA-tensorflow](https://github.com/JamesChuanggg/VQA-tensorflow) + word2vec) , run  
+
+```
+$ python prepro_w2v.py --input_train_json data/vqa_raw_train.json --input_test_json data/vqa_raw_test.json --num_ans 1000
+```
+
+to get the question features. `--num_ans` specifiy how many top answers you want to use during training. You will also see some question and answer statistics in the terminal output. This will generate two files in your main folder, `data_prepro.h5` and `data_prepro.json`.
+
+#### Extract image features
+To get the image features, run
 
 ```
 $ python prepro_img.py
 ```
 
-Here we use caffe to extract the `pool5` feature map instead of `fc7` from VGG_ILSVRC_19_layers [model](https://gist.github.com/ksimonyan/3785162f95cd2d5fee77). After this step, you can get the image feature `data_img.h5`. We have prepared everything and ready to launch training.
+Here we use caffe to extract the `pool5` feature map instead of `fc7` from VGG_ILSVRC_19_layers [model](https://gist.github.com/ksimonyan/3785162f95cd2d5fee77). The path of the caffe model and the output file is designated in the script. After this step, you can get the image feature `data_img.h5`. We have prepared everything and ready to launch training.
 
 
 ### Training and Testing
@@ -53,3 +69,14 @@ $ python s2i.py
 ```
 
 This will generate the result `OpenEnded_mscoco_lstm_results.json`. To evaluate the accuracy of generate result, you need to download the [VQA evaluation tools](https://github.com/VT-vision-lab/VQA).
+
+### Demo Website
+We also provide a demo website project for this code, please see `demo/`.
+Here are some results:
+![](http://i.imgur.com/Q0YJeP1.png)
+
+![](http://i.imgur.com/21hhMqo.png)
+
+![](http://i.imgur.com/HqH381v.png)
+
+![](http://i.imgur.com/4LgShex.png)
