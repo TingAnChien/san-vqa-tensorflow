@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<center>
+<head>
+    <b><p style="font-size:300%; font-family:verdana; color:#2828FF"> VQA Demo </p></b>
+
+    <style type="text/css">
+        body {
+            font-family: verdana;
+            font-size: 120%;
+            color: #000000;
+        }
+        #vqa {
+            font-family: verdana;
+            font-size: 150%;
+            color: #000000;
+            padding: 0.2px;
+        }
+
+        #footer {
+            font-family: verdana;
+            font-size: 90%;
+            color: #000000;
+        }
+
+        table {
+            border-spacing: 5px;
+        }
+    </style>
+
+</head>
+<body>
+    {% load static %}
+
+    {% block content %}
+
+    <form method="post" enctype="multipart/form-data">{% csrf_token %}
+        <table class="fixed">
+            <col width="70px" />
+            <col width="550px" />
+            <tr>
+                <td></td>
+                <td> Upload Image: <input type="file" class="" name="image"> </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td> Enter question: <input type="text" class="" name="question" maxlength="90" size="32"> </td>
+            </tr>
+        </table>
+        <p><button type="submit"> Upload </button></p>
+    </form>
+
+    <hr color="#2828FF" size="8" width="50%">
+
+    <vqa id="vqa">
+        <table class="fixed">
+            <col width="360px" />
+            <col width="360px" />
+            <tr>
+                <td>Image:</td>
+                <td>Attention: </td>
+            </tr>
+            <tr>
+                <td><img src="{{ uploaded_file_url }}" height="300"></td>
+                <td><img src="{{ att_image_url }}" height="300"></td>
+            </tr>
+        </table>
+
+        <table class="fixed">
+            <col width="100px" />
+            <col width="900px" />
+            <tr>
+                <td></td>
+                <td> Question: {{ input_question }} </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td> Answer: {{ vqa_ans }} </td>
+            </tr>
+        </table>
+    </vqa>
+
+    <hr color="#2828FF" size="5" width="50%">
+
+    <footer id="footer">
+        <p> Created by Gina Wu.</p>
+        <p> June 2017. </p>
+    </footer>
+
+    {% endblock %}
+</body>
+</center>
+</html>
