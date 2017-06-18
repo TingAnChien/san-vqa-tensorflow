@@ -7,7 +7,6 @@ import math
 import cv2
 import json
 import attention
-#import attention_old as attention
 rnn_cell = tf.nn.rnn_cell
 
 class Answer_Generator():
