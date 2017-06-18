@@ -10,7 +10,7 @@ This code is modified from a tensorflow edition for deeper LSTM and normalized C
 The code is written in Python and requires [Tensorflow](https://www.tensorflow.org)(>r1.0). The preprocssinng code is in Python. The code for image feature extraction is written in Lua and requires [Torch](http://torch.ch/).</br>
 (I also provide an old version(r0.10) for tensorflow model in branch r0.10)
 
-### Prepare Data (from [tensorflow](https://github.com/JamesChuanggg/VQA-tensorflow))
+### Prepare Data (from [VQA-tensorflow](https://github.com/JamesChuanggg/VQA-tensorflow))
 (Here's a copy from the original readme.md)
 The first thing you need to do is to download the data and do some preprocessing. Head over to the `data/` folder and run
 
