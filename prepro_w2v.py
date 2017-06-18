@@ -16,9 +16,23 @@ import pdb
 import string
 import h5py
 from nltk.tokenize import word_tokenize
+import gensim
 import json
-
 import re
+
+feat_dim = 300
+model_path = '/path/to/GoogleNews-vectors-negative300.bin'
+model_w2v = gensim.models.KeyedVectors.load_word2vec_format(model_path, binary=True)
+
+def extract_feat(doc):
+    feat = []
+    for word in doc:
+        try:
+            feat.append(model_w2v[word])
+        except:
+            pass
+    return feat
+
 def tokenize(sentence):
     return [i for i in re.split(r"([-.\"',:? !\$#@~()*&\^%;\[\]/\\\+<>\n=])", sentence) if i!='' and i!=' ' and i!='\n'];
 
@@ -101,25 +115,27 @@ def get_top_answers(imgs, params):
 
     return vocab[:params['num_ans']]
 
-def encode_question(imgs, params, wtoi):
+##
+# Modified to use word2vec.
+##
+
+def encode_question(imgs, params):
 
     max_length = params['max_length']
     N = len(imgs)
 
-    label_arrays = np.zeros((N, max_length), dtype='uint32')
+    label_arrays = np.zeros((N, max_length, feat_dim), dtype='float32')
     label_length = np.zeros(N, dtype='uint32')
     question_id = np.zeros(N, dtype='uint32')
     question_counter = 0
     for i,img in enumerate(imgs):
         question_id[question_counter] = img['ques_id']
-        label_length[question_counter] = min(max_length, len(img['final_question'])) # record the length of this sequence
+        feat = np.array(extract_feat(img['processed_tokens']))
+        label_length[question_counter] = min(max_length, len(feat)) # record the length of this sequence
+        label_arrays[i, :label_length[question_counter], :] = feat
         question_counter += 1
-        for k,w in enumerate(img['final_question']):
-            if k < max_length:
-                label_arrays[i,k] = wtoi[w]
     
     return label_arrays, label_length, question_id
-
 
 def encode_answer(imgs, atoi):
     N = len(imgs)
@@ -186,16 +202,10 @@ def main(params):
     # tokenization and preprocessing testing question
     imgs_test = prepro_question(imgs_test, params)
 
-    # create the vocab for question
-    imgs_train, vocab = build_vocab_question(imgs_train, params)
-    itow = {i+1:w for i,w in enumerate(vocab)} # a 1-indexed vocab translation table
-    wtoi = {w:i+1 for i,w in enumerate(vocab)} # inverse table
-    json.dump(wtoi, open('word_to_ix.json', 'w'))
+    ques_train, ques_length_train, question_id_train = encode_question(imgs_train, params)
 
-    ques_train, ques_length_train, question_id_train = encode_question(imgs_train, params, wtoi)
-
-    imgs_test = apply_vocab_question(imgs_test, wtoi)
-    ques_test, ques_length_test, question_id_test = encode_question(imgs_test, params, wtoi)
+    #imgs_test = apply_vocab_question(imgs_test, wtoi)
+    ques_test, ques_length_test, question_id_test = encode_question(imgs_test, params)
 
     # get the unique image for train and test
     unique_img_train, img_pos_train = get_unqiue_img(imgs_train)
@@ -203,29 +213,26 @@ def main(params):
 
     # get the answer encoding.
     A = encode_answer(imgs_train, atoi)
-    #MC_ans_test = encode_mc_answer(imgs_test, atoi)
 
     # create output h5 file for training set.
     N = len(imgs_train)
     f = h5py.File(params['output_h5'], "w")
-    f.create_dataset("ques_train", dtype='uint32', data=ques_train)
+    f.create_dataset("ques_train", dtype='float32', data=ques_train)
     f.create_dataset("ques_length_train", dtype='uint32', data=ques_length_train)
     f.create_dataset("answers", dtype='uint32', data=A)
     f.create_dataset("question_id_train", dtype='uint32', data=question_id_train)
     f.create_dataset("img_pos_train", dtype='uint32', data=img_pos_train)
     
-    f.create_dataset("ques_test", dtype='uint32', data=ques_test)
+    f.create_dataset("ques_test", dtype='float32', data=ques_test)
     f.create_dataset("ques_length_test", dtype='uint32', data=ques_length_test)
     f.create_dataset("question_id_test", dtype='uint32', data=question_id_test)
     f.create_dataset("img_pos_test", dtype='uint32', data=img_pos_test)
-    #f.create_dataset("MC_ans_test", dtype='uint32', data=MC_ans_test)
 
     f.close()
     print 'wrote ', params['output_h5']
 
     # create output json file
     out = {}
-    out['ix_to_word'] = itow # encode the (1-indexed) vocab
     out['ix_to_ans'] = itoa
     out['unique_img_train'] = unique_img_train
     out['unique_img_test'] = unique_img_test
