@@ -1,4 +1,4 @@
-f:wom nltk.tokenize import word_tokenize
+from nltk.tokenize import word_tokenize
 from scipy.ndimage.filters import gaussian_filter
 import scipy.misc as misc
 import numpy as np
