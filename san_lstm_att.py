@@ -96,18 +96,19 @@ class Answer_Generator():
         state = tf.zeros([self.batch_size, self.stacked_lstm.state_size])
         loss = 0.0
         states_feat = []
-        for i in range(max_words_q):
-            if i==0:
-                ques_emb_linear = tf.zeros([self.batch_size, self.input_embedding_size])
-            else:
-                tf.get_variable_scope().reuse_variables()
-                ques_emb_linear = tf.nn.embedding_lookup(self.embed_ques_W, question[:,i-1])
+        with tf.variable_scope("embed"):
+            for i in range(max_words_q):
+                if i==0:
+                    ques_emb_linear = tf.zeros([self.batch_size, self.input_embedding_size])
+                else:
+                    tf.get_variable_scope().reuse_variables()
+                    ques_emb_linear = tf.nn.embedding_lookup(self.embed_ques_W, question[:,i-1])
 
-            ques_emb_drop = tf.nn.dropout(ques_emb_linear, 1-self.drop_out_rate)
-            ques_emb = tf.tanh(ques_emb_drop)
-            
-            output, state = self.stacked_lstm(ques_emb, state)
-            states_feat.append(ques_emb_linear) 
+                ques_emb_drop = tf.nn.dropout(ques_emb_linear, 1-self.drop_out_rate)
+                ques_emb = tf.tanh(ques_emb_drop)
+                
+                output, state = self.stacked_lstm(ques_emb, state)
+                states_feat.append(ques_emb_linear) 
 
         question_feat = tf.pack(states_feat,axis=-1)
 
