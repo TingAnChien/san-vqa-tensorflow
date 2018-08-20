@@ -15,14 +15,15 @@ cnn_proto = 'vgg19/deploy_batch40.prototxt'
 cnn_model = 'vgg19/VGG_ILSVRC_19_layers.caffemodel'
 gpuid = 0
 batch_size = 40
-out_name = 'data_img_fc7.h5'
+out_name = 'data_img.h5'
+#out_name = 'data_img_fc7.h5'
 
 def extract_feat(imlist, dname):
     dataLen = len(imlist)
     bar = Bar('Processing {}'.format(dname), max=dataLen/batch_size+1)
     # vgg19
-    #f.create_dataset(dname, (dataLen, 512, 7, 7), dtype='f4') # pool5
-    f.create_dataset(dname, (dataLen, 4096), dtype='f4') # fc7
+    f.create_dataset(dname, (dataLen, 512, 7, 7), dtype='f4') # pool5
+    #f.create_dataset(dname, (dataLen, 4096), dtype='f4') # fc7
     batch = zip(range(0, dataLen, batch_size), range(batch_size, dataLen+1, batch_size))
     batch.append(((dataLen//batch_size)*batch_size, dataLen))
     for start, end in batch:
@@ -36,8 +37,8 @@ def extract_feat(imlist, dname):
         net.blobs['data'].data[:] = batch_image
         net.forward()
         # vgg19
-        #batch_feat = net.blobs['pool5'].data[...].copy()
-        batch_feat = net.blobs['fc7'].data[...].copy()
+        batch_feat = net.blobs['pool5'].data[...].copy()
+        #batch_feat = net.blobs['fc7'].data[...].copy()
         f[dname][start:end] = batch_feat[:end-start, ...]
         bar.next()
     bar.finish()
