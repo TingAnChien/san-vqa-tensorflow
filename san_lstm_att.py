@@ -89,17 +89,18 @@ class Answer_Generator():
         question = tf.placeholder(tf.int32, [self.batch_size, self.max_words_q])
 
         state = self.stacked_lstm.zero_state(self.batch_size, tf.float32)
-        for i in range(max_words_q):
-            if i==0:
-                ques_emb_linear = tf.zeros([self.batch_size, self.input_embedding_size])
-            else:
-                tf.get_variable_scope().reuse_variables()
-                ques_emb_linear = tf.nn.embedding_lookup(self.embed_ques_W, question[:,i-1])
+        with tf.variable_scope("embed"):
+            for i in range(max_words_q):
+                if i==0:
+                    ques_emb_linear = tf.zeros([self.batch_size, self.input_embedding_size])
+                else:
+                    tf.get_variable_scope().reuse_variables()
+                    ques_emb_linear = tf.nn.embedding_lookup(self.embed_ques_W, question[:,i-1])
 
-            ques_emb_drop = tf.nn.dropout(ques_emb_linear, 1-self.drop_out_rate)
-            ques_emb = tf.tanh(ques_emb_drop)
-            
-            output, state = self.stacked_lstm(ques_emb, state)
+                ques_emb_drop = tf.nn.dropout(ques_emb_linear, 1-self.drop_out_rate)
+                ques_emb = tf.tanh(ques_emb_drop)
+                
+                output, state = self.stacked_lstm(ques_emb, state)
 
         # multimodal (fusing question & image)
         question_emb = tf.reshape(tf.transpose(state, [2, 1, 0, 3]), [self.batch_size, -1])
