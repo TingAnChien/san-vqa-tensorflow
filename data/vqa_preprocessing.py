@@ -12,6 +12,7 @@ import os
 import argparse
 
 def download_vqa():
+    '''
     os.system('wget http://images.cocodataset.org/zips/train2014.zip -P zip/')
     os.system('wget http://images.cocodataset.org/zips/val2014.zip -P zip/')
     os.system('wget http://images.cocodataset.org/zips/test2015.zip -P zip/')
@@ -19,14 +20,14 @@ def download_vqa():
     # Download the VQA Annotations
     os.system('wget https://s3.amazonaws.com/cvmlp/vqa/mscoco/vqa/v2_Annotations_Train_mscoco.zip -P zip/')
     os.system('wget https://s3.amazonaws.com/cvmlp/vqa/mscoco/vqa/v2_Annotations_Val_mscoco.zip -P zip/')
-
+    '''
 
     # Unzip the annotations
-    os.system('unzip zip/Questions_Train_mscoco.zip -d annotations/')
-    os.system('unzip zip/Questions_Val_mscoco.zip -d annotations/')
-    os.system('unzip zip/Questions_Test_mscoco.zip -d annotations/')
-    os.system('unzip zip/Annotations_Train_mscoco.zip -d annotations/')
-    os.system('unzip zip/Annotations_Val_mscoco.zip -d annotations/')
+    os.system('unzip zip/test2015.zip -d annotations/')
+    os.system('unzip zip/train2014.zip -d annotations/')
+    os.system('unzip zip/v2_Annotations_Train_mscoco.zip -d annotations/')
+    os.system('unzip zip/v2_Annotations_Val_mscoco.zip -d annotations/')
+    os.system('unzip zip/val2014.zip -d annotations/')
 
 
 def main(params):
