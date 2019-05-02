@@ -1,8 +1,8 @@
 """
 Download the vqa data and preprocessing.
 
-Version: 1.0
-Contributor: Jiasen Lu
+Version: 1.35
+Contributor: Jiasen Lu & Kunlun Zhu
 """
 
 
