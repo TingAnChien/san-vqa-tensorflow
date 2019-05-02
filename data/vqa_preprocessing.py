@@ -79,9 +79,9 @@ def main(params):
         train_anno = json.load(open('annotations/mscoco_train2014_annotations.json', 'r'))
         val_anno = json.load(open('annotations/mscoco_val2014_annotations.json', 'r'))
 
-        train_ques = json.load(open('annotations/MultipleChoice_mscoco_train2014_questions.json', 'r'))
-        val_ques = json.load(open('annotations/MultipleChoice_mscoco_val2014_questions.json', 'r'))
-        test_ques = json.load(open('annotations/MultipleChoice_mscoco_test2015_questions.json', 'r'))
+        train_ques = json.load(open('annotations/v2_OpenEnded_mscoco_train2014_questions.json', 'r'))
+        val_ques = json.load(open('annotations/v2_OpenEnded_mscoco_val2014_questions.json', 'r'))
+        test_ques = json.load(open('annotations/v2_OpenEnded_mscoco_test2015_questions.json', 'r'))
         
         subtype = 'train2014'
         for i in range(len(train_anno['annotations'])):
