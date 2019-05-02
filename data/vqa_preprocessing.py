@@ -12,23 +12,25 @@ import os
 import argparse
 
 def download_vqa():
+    
+    os.system('wget https://s3.amazonaws.com/cvmlp/vqa/mscoco/vqa/v2_Questions_Train_mscoco.zip -P zip/')
+    os.system('wget https://s3.amazonaws.com/cvmlp/vqa/mscoco/vqa/v2_Questions_Val_mscoco.zip -P zip/')
+    os.system('wget https://s3.amazonaws.com/cvmlp/vqa/mscoco/vqa/v2_Questions_Test_mscoco.zip -P zip/')
     '''
-    os.system('wget http://images.cocodataset.org/zips/train2014.zip -P zip/')
-    os.system('wget http://images.cocodataset.org/zips/val2014.zip -P zip/')
-    os.system('wget http://images.cocodataset.org/zips/test2015.zip -P zip/')
-
     # Download the VQA Annotations
     os.system('wget https://s3.amazonaws.com/cvmlp/vqa/mscoco/vqa/v2_Annotations_Train_mscoco.zip -P zip/')
     os.system('wget https://s3.amazonaws.com/cvmlp/vqa/mscoco/vqa/v2_Annotations_Val_mscoco.zip -P zip/')
     '''
 
     # Unzip the annotations
+    '''
     os.system('unzip zip/test2015.zip -d annotations/')
     os.system('unzip zip/train2014.zip -d annotations/')
-    os.system('unzip zip/v2_Annotations_Train_mscoco.zip -d annotations/')
-    os.system('unzip zip/v2_Annotations_Val_mscoco.zip -d annotations/')
-    os.system('unzip zip/val2014.zip -d annotations/')
-
+    '''
+    os.system('unzip zip/v2_Questions_Train_mscoco.zip -d annotations/')
+    os.system('unzip zip/v2_Questions_Val_mscoco.zip -d annotations/')
+    os.system('unzip zip/v2_Questions_Test_mscoco.zip -d annotations/')
+    
 
 def main(params):
     if params['download'] == 'True':
@@ -45,8 +47,8 @@ def main(params):
     if params['split'] == 1:
 
         print 'Loading annotations and questions...'
-        train_anno = json.load(open('annotations/mscoco_train2014_annotations.json', 'r'))
-        val_anno = json.load(open('annotations/mscoco_val2014_annotations.json', 'r'))
+        train_anno = json.load(open('v2_mscoco_train2014_annotations.json ', 'r'))
+        val_anno = json.load(open('v2_mscoco_val2014_annotations.json', 'r'))
 
         train_ques = json.load(open('annotations/MultipleChoice_mscoco_train2014_questions.json', 'r'))
         val_ques = json.load(open('annotations/MultipleChoice_mscoco_val2014_questions.json', 'r'))
