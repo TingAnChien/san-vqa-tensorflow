@@ -46,11 +46,11 @@ def main(params):
     if params['split'] == 1:
 
         print 'Loading annotations and questions...'
-        train_anno = json.load(open('v2_mscoco_train2014_annotations.json ', 'r'))
-        val_anno = json.load(open('v2_mscoco_val2014_annotations.json', 'r'))
+        train_anno = json.load(open('annotations/v2_mscoco_train2014_annotations.json', 'r'))
+        val_anno = json.load(open('annotations/v2_mscoco_val2014_annotations.json', 'r'))
 
-        train_ques = json.load(open('annotations/MultipleChoice_mscoco_train2014_questions.json', 'r'))
-        val_ques = json.load(open('annotations/MultipleChoice_mscoco_val2014_questions.json', 'r'))
+        train_ques = json.load(open('annotations/v2_OpenEnded_mscoco_train2014_questions.json', 'r'))
+        val_ques = json.load(open('annotations/v2_OpenEnded_mscoco_val2014_questions.json', 'r'))
 
         subtype = 'train2014'
         for i in range(len(train_anno['annotations'])):
