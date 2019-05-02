@@ -12,11 +12,11 @@ import os
 import argparse
 
 def download_vqa():
-    
+    '''
     os.system('wget https://s3.amazonaws.com/cvmlp/vqa/mscoco/vqa/v2_Questions_Train_mscoco.zip -P zip/')
     os.system('wget https://s3.amazonaws.com/cvmlp/vqa/mscoco/vqa/v2_Questions_Val_mscoco.zip -P zip/')
     os.system('wget https://s3.amazonaws.com/cvmlp/vqa/mscoco/vqa/v2_Questions_Test_mscoco.zip -P zip/')
-    '''
+    
     # Download the VQA Annotations
     os.system('wget https://s3.amazonaws.com/cvmlp/vqa/mscoco/vqa/v2_Annotations_Train_mscoco.zip -P zip/')
     os.system('wget https://s3.amazonaws.com/cvmlp/vqa/mscoco/vqa/v2_Annotations_Val_mscoco.zip -P zip/')
@@ -26,11 +26,10 @@ def download_vqa():
     '''
     os.system('unzip zip/test2015.zip -d annotations/')
     os.system('unzip zip/train2014.zip -d annotations/')
-    '''
     os.system('unzip zip/v2_Questions_Train_mscoco.zip -d annotations/')
     os.system('unzip zip/v2_Questions_Val_mscoco.zip -d annotations/')
     os.system('unzip zip/v2_Questions_Test_mscoco.zip -d annotations/')
-    
+    '''
 
 def main(params):
     if params['download'] == 'True':
