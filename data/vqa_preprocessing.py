@@ -12,13 +12,13 @@ import os
 import argparse
 
 def download_vqa():
-    os.system('wget http://visualqa.org/data/mscoco/vqa/Questions_Train_mscoco.zip -P zip/')
-    os.system('wget http://visualqa.org/data/mscoco/vqa/Questions_Val_mscoco.zip -P zip/')
-    os.system('wget http://visualqa.org/data/mscoco/vqa/Questions_Test_mscoco.zip -P zip/')
+    os.system('wget http://images.cocodataset.org/zips/train2014.zip -P zip/')
+    os.system('wget http://images.cocodataset.org/zips/val2014.zip -P zip/')
+    os.system('wget http://images.cocodataset.org/zips/test2015.zip -P zip/')
 
     # Download the VQA Annotations
-    os.system('wget http://visualqa.org/data/mscoco/vqa/Annotations_Train_mscoco.zip -P zip/')
-    os.system('wget http://visualqa.org/data/mscoco/vqa/Annotations_Val_mscoco.zip -P zip/')
+    os.system('wget https://s3.amazonaws.com/cvmlp/vqa/mscoco/vqa/v2_Annotations_Train_mscoco.zip -P zip/')
+    os.system('wget https://s3.amazonaws.com/cvmlp/vqa/mscoco/vqa/v2_Annotations_Val_mscoco.zip -P zip/')
 
 
     # Unzip the annotations
