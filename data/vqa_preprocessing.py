@@ -75,8 +75,8 @@ def main(params):
             test.append({'ques_id': question_id, 'img_path': image_path, 'question': question, 'MC_ans': mc_ans})
     else:
         print 'Loading annotations and questions...'
-        train_anno = json.load(open('annotations/mscoco_train2014_annotations.json', 'r'))
-        val_anno = json.load(open('annotations/mscoco_val2014_annotations.json', 'r'))
+        train_anno = json.load(open('annotations/v2_mscoco_train2014_annotations.json', 'r'))
+        val_anno = json.load(open('annotations/v2_mscoco_val2014_annotations.json', 'r'))
 
         train_ques = json.load(open('annotations/v2_OpenEnded_mscoco_train2014_questions.json', 'r'))
         val_ques = json.load(open('annotations/v2_OpenEnded_mscoco_val2014_questions.json', 'r'))
