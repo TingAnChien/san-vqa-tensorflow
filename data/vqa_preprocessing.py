@@ -1,8 +1,8 @@
 """
 Download the vqa data and preprocessing.
 
-Version: 1.0
-Contributor: Jiasen Lu
+Version: 1.35
+Contributor: Jiasen Lu & Kunlun Zhu
 """
 
 
@@ -12,22 +12,24 @@ import os
 import argparse
 
 def download_vqa():
-    os.system('wget http://visualqa.org/data/mscoco/vqa/Questions_Train_mscoco.zip -P zip/')
-    os.system('wget http://visualqa.org/data/mscoco/vqa/Questions_Val_mscoco.zip -P zip/')
-    os.system('wget http://visualqa.org/data/mscoco/vqa/Questions_Test_mscoco.zip -P zip/')
-
+    '''
+    os.system('wget https://s3.amazonaws.com/cvmlp/vqa/mscoco/vqa/v2_Questions_Train_mscoco.zip -P zip/')
+    os.system('wget https://s3.amazonaws.com/cvmlp/vqa/mscoco/vqa/v2_Questions_Val_mscoco.zip -P zip/')
+    os.system('wget https://s3.amazonaws.com/cvmlp/vqa/mscoco/vqa/v2_Questions_Test_mscoco.zip -P zip/')
+    
     # Download the VQA Annotations
-    os.system('wget http://visualqa.org/data/mscoco/vqa/Annotations_Train_mscoco.zip -P zip/')
-    os.system('wget http://visualqa.org/data/mscoco/vqa/Annotations_Val_mscoco.zip -P zip/')
-
+    os.system('wget https://s3.amazonaws.com/cvmlp/vqa/mscoco/vqa/v2_Annotations_Train_mscoco.zip -P zip/')
+    os.system('wget https://s3.amazonaws.com/cvmlp/vqa/mscoco/vqa/v2_Annotations_Val_mscoco.zip -P zip/')
+    '''
 
     # Unzip the annotations
-    os.system('unzip zip/Questions_Train_mscoco.zip -d annotations/')
-    os.system('unzip zip/Questions_Val_mscoco.zip -d annotations/')
-    os.system('unzip zip/Questions_Test_mscoco.zip -d annotations/')
-    os.system('unzip zip/Annotations_Train_mscoco.zip -d annotations/')
-    os.system('unzip zip/Annotations_Val_mscoco.zip -d annotations/')
-
+    '''
+    os.system('unzip zip/test2015.zip -d annotations/')
+    os.system('unzip zip/train2014.zip -d annotations/')
+    os.system('unzip zip/v2_Questions_Train_mscoco.zip -d annotations/')
+    os.system('unzip zip/v2_Questions_Val_mscoco.zip -d annotations/')
+    os.system('unzip zip/v2_Questions_Test_mscoco.zip -d annotations/')
+    '''
 
 def main(params):
     if params['download'] == 'True':
@@ -44,11 +46,11 @@ def main(params):
     if params['split'] == 1:
 
         print 'Loading annotations and questions...'
-        train_anno = json.load(open('annotations/mscoco_train2014_annotations.json', 'r'))
-        val_anno = json.load(open('annotations/mscoco_val2014_annotations.json', 'r'))
+        train_anno = json.load(open('annotations/v2_mscoco_train2014_annotations.json', 'r'))
+        val_anno = json.load(open('annotations/v2_mscoco_val2014_annotations.json', 'r'))
 
-        train_ques = json.load(open('annotations/MultipleChoice_mscoco_train2014_questions.json', 'r'))
-        val_ques = json.load(open('annotations/MultipleChoice_mscoco_val2014_questions.json', 'r'))
+        train_ques = json.load(open('annotations/v2_OpenEnded_mscoco_train2014_questions.json', 'r'))
+        val_ques = json.load(open('annotations/v2_OpenEnded_mscoco_val2014_questions.json', 'r'))
 
         subtype = 'train2014'
         for i in range(len(train_anno['annotations'])):
@@ -57,10 +59,12 @@ def main(params):
             image_path = imdir%(subtype, subtype, train_anno['annotations'][i]['image_id'])
 
             question = train_ques['questions'][i]['question']
-            mc_ans = train_ques['questions'][i]['multiple_choices']
+            #the new dataset doesn't exist the multiple_choices in the dataset, so we delete it for now
+            #mc_ans = train_ques['questions'][i]['multiple_choices']
 
-            train.append({'ques_id': question_id, 'img_path': image_path, 'question': question, 'MC_ans': mc_ans, 'ans': ans})
-        
+            #train.append({'ques_id': question_id, 'img_path': image_path, 'question': question, 'MC_ans': mc_ans, 'ans': ans})
+            train.append({'ques_id': question_id, 'img_path': image_path, 'question': question, 'ans': ans})
+       
         subtype = 'val2014'
         for i in range(len(val_anno['annotations'])):
             ans = val_anno['annotations'][i]['multiple_choice_answer']
@@ -68,17 +72,19 @@ def main(params):
             image_path = imdir%(subtype, subtype, val_anno['annotations'][i]['image_id'])
 
             question = val_ques['questions'][i]['question']
-            mc_ans = val_ques['questions'][i]['multiple_choices']
+            #mc_ans = val_ques['questions'][i]['multiple_choices']
 
-            test.append({'ques_id': question_id, 'img_path': image_path, 'question': question, 'MC_ans': mc_ans})
+            #test.append({'ques_id': question_id, 'img_path': image_path, 'question': question, 'MC_ans': mc_ans})
+            test.append({'ques_id': question_id, 'img_path': image_path, 'question': question})
+
     else:
         print 'Loading annotations and questions...'
-        train_anno = json.load(open('annotations/mscoco_train2014_annotations.json', 'r'))
-        val_anno = json.load(open('annotations/mscoco_val2014_annotations.json', 'r'))
+        train_anno = json.load(open('annotations/v2_mscoco_train2014_annotations.json', 'r'))
+        val_anno = json.load(open('annotations/v2_mscoco_val2014_annotations.json', 'r'))
 
-        train_ques = json.load(open('annotations/MultipleChoice_mscoco_train2014_questions.json', 'r'))
-        val_ques = json.load(open('annotations/MultipleChoice_mscoco_val2014_questions.json', 'r'))
-        test_ques = json.load(open('annotations/MultipleChoice_mscoco_test2015_questions.json', 'r'))
+        train_ques = json.load(open('annotations/v2_OpenEnded_mscoco_train2014_questions.json', 'r'))
+        val_ques = json.load(open('annotations/v2_OpenEnded_mscoco_val2014_questions.json', 'r'))
+        test_ques = json.load(open('annotations/v2_OpenEnded_mscoco_test2015_questions.json', 'r'))
         
         subtype = 'train2014'
         for i in range(len(train_anno['annotations'])):
@@ -87,9 +93,10 @@ def main(params):
             image_path = imdir%(subtype, subtype, train_anno['annotations'][i]['image_id'])
 
             question = train_ques['questions'][i]['question']
-            mc_ans = train_ques['questions'][i]['multiple_choices']
+            #mc_ans = train_ques['questions'][i]['multiple_choices']
 
-            train.append({'ques_id': question_id, 'img_path': image_path, 'question': question, 'MC_ans': mc_ans, 'ans': ans})
+            #train.append({'ques_id': question_id, 'img_path': image_path, 'question': question, 'MC_ans': mc_ans, 'ans': ans})
+            train.append({'ques_id': question_id, 'img_path': image_path, 'question': question, 'ans': ans})
 
         subtype = 'val2014'
         for i in range(len(val_anno['annotations'])):
@@ -98,19 +105,22 @@ def main(params):
             image_path = imdir%(subtype, subtype, val_anno['annotations'][i]['image_id'])
 
             question = val_ques['questions'][i]['question']
-            mc_ans = val_ques['questions'][i]['multiple_choices']
+            #mc_ans = val_ques['questions'][i]['multiple_choices']
 
-            train.append({'ques_id': question_id, 'img_path': image_path, 'question': question, 'MC_ans': mc_ans, 'ans': ans})
-        
+            #train.append({'ques_id': question_id, 'img_path': image_path, 'question': question, 'MC_ans': mc_ans, 'ans': ans})
+            train.append({'ques_id': question_id, 'img_path': image_path, 'question': question, 'ans': ans})
+
         subtype = 'test2015'
         for i in range(len(test_ques['questions'])):
             question_id = test_ques['questions'][i]['question_id']
             image_path = imdir%(subtype, subtype, test_ques['questions'][i]['image_id'])
 
             question = test_ques['questions'][i]['question']
-            mc_ans = test_ques['questions'][i]['multiple_choices']
+            #mc_ans = test_ques['questions'][i]['multiple_choices']
 
-            test.append({'ques_id': question_id, 'img_path': image_path, 'question': question, 'MC_ans': mc_ans})
+            #test.append({'ques_id': question_id, 'img_path': image_path, 'question': question, 'MC_ans': mc_ans})
+            test.append({'ques_id': question_id, 'img_path': image_path, 'question': question})
+
 
     print 'Training sample %d, Testing sample %d...' %(len(train), len(test))
 
